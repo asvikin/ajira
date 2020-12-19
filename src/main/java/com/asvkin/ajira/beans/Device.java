@@ -23,4 +23,9 @@ public class Device {
 		}
 		return false;
 	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
 }

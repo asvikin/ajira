@@ -2,7 +2,12 @@ package com.asvkin.ajira.service.graphs;
 
 import com.asvkin.ajira.beans.ConnectionBean;
 import com.asvkin.ajira.beans.Device;
+import com.asvkin.ajira.beans.ModifyStrengthBean;
+import com.asvkin.ajira.constants.DeviceType;
 import com.asvkin.ajira.exception.AlreadyExistsException;
+import com.asvkin.ajira.exception.InvalidCommandException;
+import com.asvkin.ajira.exception.NotFoundException;
+import com.asvkin.ajira.exception.UnSupportedDeviceTypeException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,13 +25,23 @@ public class GraphService {
 	}
 	
 	public void addConnections(ConnectionBean connectionBean) {
+		if (connectionBean.getSource() == null || connectionBean.getSource().isEmpty() || connectionBean.getTargets() == null || connectionBean.getTargets().isEmpty()) {
+			throw new InvalidCommandException("Invalid command Syntax");
+		}
 		List<String> targets = connectionBean.getTargets();
 		for (String target : targets) {
 			if (connectionBean.getSource().equals(target)) {
-				throw new UnsupportedOperationException("Cannot Connect to device to itself");
+				throw new UnSupportedDeviceTypeException("Cannot Connect to device to itself");
 			}
-			graph.addEdge(graph.getDeviceWithName(connectionBean.getSource()).get(),
-					graph.getDeviceWithName(target).get(), true);
+			if (graph.hasEdge(graph.getDeviceWithName(connectionBean.getSource()).orElseThrow(() -> new NotFoundException(
+							"Device Not Found")),
+					graph.getDeviceWithName(target).orElseThrow(() -> new NotFoundException("Device Not Found")))) {
+				throw new AlreadyExistsException("Device are already Connected");
+			}
+			graph.addEdge(graph.getDeviceWithName(connectionBean.getSource()).orElseThrow(() -> new NotFoundException(
+							"Device Not Found")),
+					graph.getDeviceWithName(target).orElseThrow(() -> new NotFoundException("Device Not Found")),
+					true);
 		}
 	}
 	
@@ -34,10 +49,19 @@ public class GraphService {
 		return graph.getVertex();
 	}
 	
-	public String getpath(String from, String to) {
-		return null;
+	public String getPath(String from, String to) {
+		return graph.getShortestPath(from, to);
 	}
 	
-	public void modifyStrength(String deviceName) {
+	public void modifyStrength(ModifyStrengthBean modifyStrengthBean, String deviceName) {
+		Device device = graph.getDeviceWithName(deviceName).orElseThrow(() -> new NotFoundException("Device Not " +
+				                                                                                            "Found"));
+		if (DeviceType.valueOf(device.getType()) == DeviceType.REPEATER) {
+			throw new UnSupportedDeviceTypeException("Cannot set strength for a Repeater");
+		}
+		if (modifyStrengthBean.getValue() < 0) {
+			throw new InvalidCommandException("Value should be a Positive Integer");
+		}
+		device.setStrength(modifyStrengthBean.getValue());
 	}
 }

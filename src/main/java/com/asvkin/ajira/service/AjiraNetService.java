@@ -31,6 +31,9 @@ public class AjiraNetService {
 	private Map<String, String> getHeaders(String input) {
 		try {
 			int newLineIndex = input.indexOf(NEW_LINE);
+			if (newLineIndex == -1) {
+				return new HashMap<>();
+			}
 			int doubleNewLineIndex = input.indexOf(DOUBLE_NEW_LINE);
 			String headerAsString = input.substring(newLineIndex + 1, doubleNewLineIndex);
 			return getHeadersAsMap(headerAsString.split(NEW_LINE));
@@ -50,7 +53,7 @@ public class AjiraNetService {
 	
 	private String getEndPoint(String input) {
 		try {
-			return Objects.requireNonNull(input.substring(0, input.indexOf(NEW_LINE)), "Invalid Command").split(SPACE)[1];
+			return Objects.requireNonNull(input.split(NEW_LINE)[0], "Invalid Command").split(SPACE)[1];
 		} catch (Exception e) {
 			throw new InvalidCommandException("Invalid Command", e.getCause());
 		}

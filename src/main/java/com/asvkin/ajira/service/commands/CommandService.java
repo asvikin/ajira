@@ -24,7 +24,7 @@ public abstract class CommandService {
 		try {
 			return (Parser) applicationContext.getBean("parser-" + mediaType);
 		} catch (Exception e) {
-			throw new InvalidContentTypeException(mediaType + " NO parser Present", e.getCause());
+			throw new InvalidContentTypeException("Invalid Command");
 		}
 	}
 }

@@ -35,7 +35,10 @@ public class FetchCommandService extends CommandService {
 	
 	private ResponseBean fetchRoutesInfo(Map<String, String> headers, String data, String endPoint) {
 		Map<String, String> queryParams = Parser.getQueryParams(endPoint);
-		String path = graphService.getpath(queryParams.get("from"), queryParams.get("to"));
+		if (!queryParams.containsKey("from") || !queryParams.containsKey("to")) {
+			throw new InvalidCommandException("Invalid Request");
+		}
+		String path = graphService.getPath(queryParams.get("from"), queryParams.get("to"));
 		return new ResponseBean("Route is " + path);
 	}
 	

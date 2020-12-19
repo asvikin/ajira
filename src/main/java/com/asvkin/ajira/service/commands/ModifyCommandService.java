@@ -15,6 +15,7 @@ public class ModifyCommandService extends CommandService {
 	private static final String DEVICES = "/devices";
 	@Autowired
 	private GraphService graphService;
+	
 	@Override
 	public ResponseBean processData(Map<String, String> headers, String endPoint, String data) {
 		if (endPoint == null || endPoint.isEmpty()) {
@@ -36,7 +37,7 @@ public class ModifyCommandService extends CommandService {
 		String uriTemplate = "/devices/{deviceName}/strength";
 		Map<String, String> pathParams = Parser.getPathParams(endPoint, uriTemplate);
 		String deviceName = pathParams.get("deviceName");
-		graphService.modifyStrength(deviceName);
+		graphService.modifyStrength(modifyStrengthBean, deviceName);
 		return new ResponseBean("Successfully defined strength");
 	}
 }
