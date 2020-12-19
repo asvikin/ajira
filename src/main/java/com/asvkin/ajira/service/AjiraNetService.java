@@ -16,8 +16,8 @@ import java.util.Objects;
 @Service
 @Slf4j
 public class AjiraNetService {
-	static private final String NEW_LINE = "\n";
-	static private final String DOUBLE_NEW_LINE = "\n\n";
+	static private final String NEW_LINE = "\r\n";
+	static private final String DOUBLE_NEW_LINE = "\r\n\r\n";
 	static private final String SPACE = " ";
 	@Autowired
 	ApplicationContext applicationContext;
@@ -50,7 +50,7 @@ public class AjiraNetService {
 	
 	private String getEndPoint(String input) {
 		try {
-			return Objects.requireNonNull(input, "Invalid Command").split(SPACE)[1];
+			return Objects.requireNonNull(input.substring(0, input.indexOf(NEW_LINE)), "Invalid Command").split(SPACE)[1];
 		} catch (Exception e) {
 			throw new InvalidCommandException("Invalid Command", e.getCause());
 		}

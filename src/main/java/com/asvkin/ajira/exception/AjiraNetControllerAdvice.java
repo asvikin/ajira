@@ -33,9 +33,9 @@ public class AjiraNetControllerAdvice {
 		return errorHandler(invalidContentTypeException, HttpStatus.BAD_REQUEST);
 	}
 	
-	@ExceptionHandler(UnSupportedDeviceType.class)
-	public ResponseEntity<?> handleUnSupportedDeviceType(UnSupportedDeviceType unSupportedDeviceType) {
-		return errorHandler(unSupportedDeviceType, HttpStatus.BAD_REQUEST);
+	@ExceptionHandler(UnSupportedDeviceTypeException.class)
+	public ResponseEntity<?> handleUnSupportedDeviceType(UnSupportedDeviceTypeException unSupportedDeviceTypeException) {
+		return errorHandler(unSupportedDeviceTypeException, HttpStatus.BAD_REQUEST);
 	}
 	
 	private ResponseEntity errorHandler(Exception exception, HttpStatus httpStatus) {

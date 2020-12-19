@@ -12,7 +12,8 @@ public class JsonParser implements Parser {
 		try {
 			return data != null && !data.isEmpty() ? new ObjectMapper().readValue(data, returnType) : null;
 		} catch (JsonProcessingException e) {
-			throw new DataParseException(e.getMessage(), e.getCause());
+			throw new DataParseException("Invalid Command");
 		}
 	}
 }
+
