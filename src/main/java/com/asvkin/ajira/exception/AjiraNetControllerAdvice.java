@@ -1,12 +1,13 @@
 package com.asvkin.ajira.exception;
 
+import com.asvkin.ajira.api.exceptions.ApiException;
 import com.asvkin.ajira.beans.ResponseBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-@RestControllerAdvice(value = "com.asvkin.ajira")
+@RestControllerAdvice("com.asvkin.ajira")
 public class AjiraNetControllerAdvice {
 	@ExceptionHandler(NotFoundException.class)
 	public ResponseEntity<?> handleNotFoundException(final NotFoundException notFoundException) {
@@ -36,6 +37,11 @@ public class AjiraNetControllerAdvice {
 	@ExceptionHandler(UnSupportedDeviceTypeException.class)
 	public ResponseEntity<?> handleUnSupportedDeviceType(UnSupportedDeviceTypeException unSupportedDeviceTypeException) {
 		return errorHandler(unSupportedDeviceTypeException, HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(ApiException.class)
+	public ResponseEntity<?> handleApiException(ApiException apiException) {
+		return errorHandler(apiException, apiException.getHttpStatus());
 	}
 	
 	private ResponseEntity errorHandler(Exception exception, HttpStatus httpStatus) {
