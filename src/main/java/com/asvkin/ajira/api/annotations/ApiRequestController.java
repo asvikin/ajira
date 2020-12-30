@@ -1,13 +1,13 @@
 package com.asvkin.ajira.api.annotations;
 
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Component;
 
 import java.lang.annotation.*;
 
 @Target({ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@RestController
+@Component
 public @interface ApiRequestController {
 	String path() default "";
 }

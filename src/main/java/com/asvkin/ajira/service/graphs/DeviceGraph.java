@@ -9,9 +9,7 @@ import com.asvkin.ajira.exception.UnSupportedDeviceTypeException;
 import java.util.*;
 
 public class DeviceGraph extends AbstractGraph<Device> {
-	protected Set<String> deviceNames = new HashSet();
-	
-	private static String formatRouteAsReadable(List<String> devices) {
+	public static String formatRouteAsReadable(List<String> devices) {
 		StringBuilder formatter = new StringBuilder();
 		for (int i = 0; i < devices.size() - 1; i++) {
 			formatter.append(devices.get(i)).append(" -> ");
@@ -31,7 +29,8 @@ public class DeviceGraph extends AbstractGraph<Device> {
 	}
 	
 	private boolean depthFirstSearch(Device current, Device destination, HashSet<String> traversed,
-			LinkedList<String> response) {
+			LinkedList<String> response, int strength) {
+		if (strength <= 0) return false;
 		if (!map.containsKey(current))
 			throw new NotFoundException("Route Not Found!");
 		if (map.get(current).contains(destination)) {
@@ -42,8 +41,18 @@ public class DeviceGraph extends AbstractGraph<Device> {
 			if (!traversed.contains(device.getName())) {
 				traversed.add(device.getName());
 				response.add(device.getName());
-				if (depthFirstSearch(device, destination, traversed, response))
+				strength--;
+				if (device.getType().equals("REPEATER")) {
+					strength *= 2;
+				}
+				if (depthFirstSearch(device, destination, traversed, response, strength))
 					return true;
+				else {
+					if (device.getType().equals("REPEATER")) {
+						strength /= 2;
+					}
+					strength++;
+				}
 				traversed.remove(device.getName());
 				response.pollLast();
 			}
@@ -66,7 +75,7 @@ public class DeviceGraph extends AbstractGraph<Device> {
 		traversed.add(fromDevice.getName());
 		LinkedList<String> response = new LinkedList<>();
 		response.add(fromDevice.getName());
-		if (depthFirstSearch(fromDevice, toDevice, traversed, response))
+		if (depthFirstSearch(fromDevice, toDevice, traversed, response, fromDevice.getStrength() + 1))
 			return formatRouteAsReadable(response);
 		else
 			throw new NotFoundException("Route Not Found!");

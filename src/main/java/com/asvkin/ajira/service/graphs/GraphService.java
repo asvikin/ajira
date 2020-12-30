@@ -15,7 +15,7 @@ import java.util.Set;
 
 @Service
 public class GraphService {
-	final private DeviceGraph graph = new DeviceGraph();
+	private final DeviceGraph graph = new DeviceGraph();
 	
 	public void addNewDevice(Device device) {
 		if (graph.hasVertex(device)) {

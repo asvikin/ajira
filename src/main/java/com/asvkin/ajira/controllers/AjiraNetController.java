@@ -18,6 +18,6 @@ public class AjiraNetController {
 	public Object ajiraNetProcess(@RequestBody String data) {
 		return receiver.process(data);
 		//Without reflections
-//		return ajiraNetService.processData(data);
+		//return ajiraNetService.processData(data);
 	}
 }
